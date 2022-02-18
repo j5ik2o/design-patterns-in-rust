@@ -1,0 +1,3 @@
+mod flyweight;
+
+fn main() {}
