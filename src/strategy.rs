@@ -2,7 +2,7 @@ use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::fmt::{Display, Formatter};
 
-#[derive(PartialEq)]
+#[derive(Clone, PartialEq)]
 pub enum Hand {
     GUU,
     CHO,
@@ -56,10 +56,11 @@ impl Hand {
 }
 
 pub trait Strategy {
-    fn next_hand(&mut self) -> Option<&Hand>;
+    fn next_hand(&mut self) -> Option<Hand>;
     fn study(&mut self, win: bool);
 }
 
+#[derive(Clone, Debug)]
 pub struct Winning {
     rng: ThreadRng,
     won: bool,
@@ -67,11 +68,11 @@ pub struct Winning {
 }
 
 impl Strategy for Winning {
-    fn next_hand(&mut self) -> Option<&Hand> {
+    fn next_hand(&mut self) -> Option<Hand> {
         if !self.won {
             self.prev_hand = Some(Hand::get_hand(self.rng.gen_range(0, 2)))
         }
-        self.prev_hand.as_ref()
+        self.prev_hand.clone()
     }
 
     fn study(&mut self, win: bool) {
@@ -90,6 +91,7 @@ impl Winning {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct Probe {
     rng: ThreadRng,
     prev_hand_value: u32,
@@ -98,19 +100,42 @@ pub struct Probe {
 }
 
 impl Strategy for Probe {
-    fn next_hand(&mut self) -> Option<&Hand> {
-        let bet = self.rng.gen_range(0, ge)
+    fn next_hand(&mut self) -> Option<Hand> {
+        let bet = self.rng.gen_range(0, self.get_sum(self.current_hand_value));
+        let hand_value = if bet < self.history[self.current_hand_value as usize][0] {
+            0
+        } else if bet
+            < self.history[self.current_hand_value as usize][0]
+                + self.history[self.current_hand_value as usize][1]
+        {
+            1
+        } else {
+            2
+        };
+        self.prev_hand_value = self.current_hand_value;
+        self.current_hand_value = hand_value;
+        Some(Hand::get_hand(hand_value))
     }
 
     fn study(&mut self, win: bool) {
-        todo!()
+        if win {
+            self.history[self.prev_hand_value as usize][self.current_hand_value as usize] += 1;
+        } else {
+            self.history[self.prev_hand_value as usize]
+                [((self.current_hand_value + 1) % 3) as usize] += 1;
+            self.history[self.prev_hand_value as usize]
+                [((self.current_hand_value + 2) % 3) as usize] += 1;
+        }
     }
 }
 
 impl Probe {
     fn get_sum(&self, hand_value: u32) -> u32 {
-       for
-        self.history[hand_value][i]
+        let mut result = 0;
+        for i in 0..2 {
+            result += self.history[hand_value as usize][i as usize]
+        }
+        result
     }
     pub fn new() -> Self {
         let rng: ThreadRng = rand::thread_rng();
@@ -125,6 +150,7 @@ impl Probe {
 
 pub struct Player {
     name: String,
+    // ストラテジがPlayのみが所有するならBox、Play以外でも共有するならRc/Arcを使う
     strategy: Box<dyn Strategy>,
     win_count: u32,
     lose_count: u32,
@@ -152,7 +178,7 @@ impl Player {
         }
     }
 
-    pub fn next_hand(&mut self) -> Option<&Hand> {
+    pub fn next_hand(&mut self) -> Option<Hand> {
         self.strategy.next_hand()
     }
 
@@ -170,5 +196,40 @@ impl Player {
 
     pub fn even(&mut self) {
         self.game_count += 1;
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn usage() {
+        let winning_strategy = Winning::new();
+        let probe_strategy = Probe::new();
+
+        let mut player1 = Player::new("Taro", Box::new(probe_strategy.clone()));
+        let mut player2 = Player::new("Hana", Box::new(probe_strategy));
+
+        for _ in 0..10000 {
+            let next_hand1 = player1.next_hand().unwrap();
+            let next_hand2 = player2.next_hand().unwrap();
+            if next_hand1.is_stronger_than(next_hand2.clone()) {
+                println!("Winner:{}", player1);
+                player1.win();
+                player2.lose();
+            } else if next_hand2.is_stronger_than(next_hand1) {
+                println!("Winner:{}", player2);
+                player1.lose();
+                player2.win();
+            } else {
+                player1.even();
+                player2.even();
+            }
+        }
+
+        println!("Total result:");
+        println!("{}", player1);
+        println!("{}", player2);
     }
 }
