@@ -2,7 +2,7 @@ use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::fmt::{Display, Formatter};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Hand {
     GUU,
     CHO,
@@ -23,6 +23,7 @@ impl Hand {
             Hand::PAA => "パー",
         }
     }
+
     pub fn get_hand(value: u32) -> Self {
         match value {
             0 => Hand::GUU,
@@ -31,6 +32,7 @@ impl Hand {
             _ => panic!("not found"),
         }
     }
+
     fn hand_value(&self) -> i32 {
         match self {
             Hand::GUU => 0,
@@ -38,6 +40,7 @@ impl Hand {
             Hand::PAA => 2,
         }
     }
+
     fn fight(&self, h: Hand) -> i32 {
         if *self == h {
             0
@@ -47,9 +50,11 @@ impl Hand {
             -1
         }
     }
+
     pub fn is_stronger_than(&self, h: Hand) -> bool {
         self.fight(h) == 1
     }
+
     pub fn is_weaker_than(&self, h: Hand) -> bool {
         self.fight(h) == -1
     }
@@ -61,13 +66,13 @@ pub trait Strategy {
 }
 
 #[derive(Clone, Debug)]
-pub struct Winning {
+pub struct WinningStrategy {
     rng: ThreadRng,
     won: bool,
     prev_hand: Option<Hand>,
 }
 
-impl Strategy for Winning {
+impl Strategy for WinningStrategy {
     fn next_hand(&mut self) -> Option<Hand> {
         if !self.won {
             self.prev_hand = Some(Hand::get_hand(self.rng.gen_range(0, 2)))
@@ -80,7 +85,7 @@ impl Strategy for Winning {
     }
 }
 
-impl Winning {
+impl WinningStrategy {
     pub fn new() -> Self {
         let rng: ThreadRng = rand::thread_rng();
         Self {
@@ -92,14 +97,14 @@ impl Winning {
 }
 
 #[derive(Clone, Debug)]
-pub struct Probe {
+pub struct ProbeStrategy {
     rng: ThreadRng,
     prev_hand_value: u32,
     current_hand_value: u32,
     history: [[u32; 3]; 3],
 }
 
-impl Strategy for Probe {
+impl Strategy for ProbeStrategy {
     fn next_hand(&mut self) -> Option<Hand> {
         let bet = self.rng.gen_range(0, self.get_sum(self.current_hand_value));
         let hand_value = if bet < self.history[self.current_hand_value as usize][0] {
@@ -129,7 +134,7 @@ impl Strategy for Probe {
     }
 }
 
-impl Probe {
+impl ProbeStrategy {
     fn get_sum(&self, hand_value: u32) -> u32 {
         let mut result = 0;
         for i in 0..2 {
@@ -205,8 +210,8 @@ mod test {
 
     #[test]
     fn usage() {
-        let winning_strategy = Winning::new();
-        let probe_strategy = Probe::new();
+        let winning_strategy = WinningStrategy::new();
+        let probe_strategy = ProbeStrategy::new();
 
         let mut player1 = Player::new("Taro", Box::new(probe_strategy.clone()));
         let mut player2 = Player::new("Hana", Box::new(probe_strategy));
