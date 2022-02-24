@@ -3,6 +3,7 @@ extern crate timer;
 
 mod flyweight;
 mod observer;
+mod proxy;
 mod state;
 mod strategy;
 mod template_method;
