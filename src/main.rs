@@ -2,6 +2,7 @@ extern crate chrono;
 extern crate timer;
 
 mod command;
+mod decorator;
 mod flyweight;
 mod observer;
 mod proxy;
