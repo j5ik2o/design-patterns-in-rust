@@ -1,4 +1,3 @@
-use std::rc::Rc;
 use std::thread::Thread;
 use std::{thread, time};
 
@@ -6,15 +5,15 @@ use rand::prelude::ThreadRng;
 use rand::Rng;
 
 pub trait NumberGenerator {
-  fn add_observer(&mut self, observer: Rc<dyn Observer>);
-  fn delete_observer(&mut self, observer: Rc<dyn Observer>);
+  fn add_observer(&mut self, observer: Box<dyn Observer>);
+  fn delete_observer(&mut self, observer: Box<dyn Observer>);
   fn notify_observers(&self);
   fn get_number(&self) -> u32;
   fn execute(&mut self);
 }
 
 pub struct RandomNumberGenerator {
-  observers: Vec<Rc<dyn Observer>>,
+  observers: Vec<Box<dyn Observer>>,
   rng: ThreadRng,
   number: u32,
 }
@@ -30,11 +29,11 @@ impl RandomNumberGenerator {
 }
 
 impl NumberGenerator for RandomNumberGenerator {
-  fn add_observer(&mut self, observer: Rc<dyn Observer>) {
+  fn add_observer(&mut self, observer: Box<dyn Observer>) {
     self.observers.push(observer);
   }
 
-  fn delete_observer(&mut self, observer: Rc<dyn Observer>) {
+  fn delete_observer(&mut self, observer: Box<dyn Observer>) {
     let index = self
       .observers
       .iter()
@@ -113,8 +112,8 @@ mod test {
     let mut generator = RandomNumberGenerator::new();
     let observer1 = DigitObserver::new();
     let observer2 = GraphObserver::new();
-    generator.add_observer(Rc::new(observer1));
-    generator.add_observer(Rc::new(observer2));
+    generator.add_observer(Box::new(observer1));
+    generator.add_observer(Box::new(observer2));
     generator.execute();
   }
 }
