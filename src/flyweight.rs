@@ -98,7 +98,7 @@ mod test {
   use super::*;
 
   #[test]
-  fn big_string() {
+  fn test() {
     let bs = BigString::new("1928374650564738291");
     print!("{}", bs);
   }

@@ -207,7 +207,7 @@ mod test {
   use super::*;
 
   #[test]
-  fn usage() {
+  fn test() {
     let winning_strategy = WinningStrategy::new();
     let probe_strategy = ProbeStrategy::new();
 

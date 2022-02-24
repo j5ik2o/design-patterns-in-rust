@@ -117,7 +117,7 @@ mod test {
   }
 
   #[test]
-  fn usage() {
+  fn test() {
     let state = State::Day;
     let mut context = StateContext::new(state);
     context.run();
