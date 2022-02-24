@@ -67,11 +67,11 @@ mod test {
     use super::*;
 
     #[test]
-    fn _1_usage_static_dispatch_impl() {
+    fn _1_usage_static_dispatch_generic() {
         let d1: CharDisplay = CharDisplay::new('H');
         let d2: StringDisplay = StringDisplay::new("Hello,world.".to_owned());
 
-        fn display(ad: impl AbstractDisplay) {
+        fn display<T: AbstractDisplay>(ad: T) {
             ad.display();
         }
 
@@ -80,11 +80,12 @@ mod test {
     }
 
     #[test]
-    fn _2_usage_static_dispatch_generic() {
+    fn _2_usage_static_dispatch_impl_trait() {
         let d1: CharDisplay = CharDisplay::new('H');
         let d2: StringDisplay = StringDisplay::new("Hello,world.".to_owned());
 
-        fn display<T: AbstractDisplay>(ad: T) {
+        // impl traitはgenericのシンタックスシュガー
+        fn display(ad: impl AbstractDisplay) {
             ad.display();
         }
 
