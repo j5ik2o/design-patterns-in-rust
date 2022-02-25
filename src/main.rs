@@ -3,6 +3,7 @@ extern crate timer;
 
 mod adaptor;
 mod bridge;
+mod builder;
 mod command;
 mod decorator;
 mod factory_method;
