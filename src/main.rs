@@ -1,6 +1,7 @@
 extern crate chrono;
 extern crate timer;
 
+mod adaptor;
 mod command;
 mod decorator;
 mod flyweight;
