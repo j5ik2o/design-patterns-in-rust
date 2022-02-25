@@ -4,6 +4,7 @@ extern crate timer;
 mod adaptor;
 mod command;
 mod decorator;
+mod factory_method;
 mod flyweight;
 mod observer;
 mod proxy;
