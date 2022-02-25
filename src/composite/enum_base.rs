@@ -68,11 +68,11 @@ impl Entry {
     self.print_line_with_prefix("");
   }
 
-  // FIXME: enumベースではEntry::Fileのときにaddが不要なのにメソッドを定義するハメになる…
+  // CAUTION: addを実装することを正しいとした場合は、Entry::FileにおいてLSP違反の疑いあり！
   pub fn add(&mut self, entry: Rc<RefCell<Entry>>) {
     match self {
+      Entry::File { .. } => panic!("Unsupported operation!!!"),
       Entry::Directory { entries, .. } => entries.push(entry),
-      _ => panic!("unsupported operation!!!"),
     }
   }
 }
