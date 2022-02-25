@@ -18,6 +18,7 @@ impl Director {
   pub fn new(builder: Rc<RefCell<dyn Builder>>) -> Self {
     Self { builder }
   }
+
   pub fn construct(&self) {
     let mut builder = self.builder.borrow_mut();
     builder.make_title("Greeting");
@@ -38,6 +39,7 @@ impl TextBuilder {
   pub fn new() -> Self {
     Self { string: "".to_owned() }
   }
+
   pub fn get_text_result(&self) -> &str {
     &self.string
   }
@@ -82,6 +84,7 @@ impl HtmlBuilder {
       string: "".to_owned(),
     }
   }
+
   pub fn get_html_result(&self) -> &str {
     self.file_name.as_ref().unwrap()
   }

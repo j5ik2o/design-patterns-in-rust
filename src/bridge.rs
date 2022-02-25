@@ -19,12 +19,15 @@ impl Display for DisplayDefault {
   fn open(&mut self) {
     self.underlying.raw_open();
   }
+
   fn print(&self) {
     self.underlying.raw_print();
   }
+
   fn close(&mut self) {
     self.underlying.raw_close();
   }
+
   fn display(&mut self) {
     self.open();
     self.print();
@@ -42,6 +45,7 @@ impl CountDisplay {
       underlying: DisplayDefault::new(underlying),
     }
   }
+
   pub fn multi_display(&mut self, times: u32) {
     self.open();
     for i in 0..times {
@@ -87,6 +91,7 @@ impl StringDisplayImpl {
       width: 0,
     }
   }
+
   fn print_line(&self) {
     print!("+");
     for _ in 0..self.width {

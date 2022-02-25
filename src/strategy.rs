@@ -140,6 +140,7 @@ impl ProbeStrategy {
     }
     result
   }
+
   pub fn new() -> Self {
     let rng: ThreadRng = rand::thread_rng();
     Self {

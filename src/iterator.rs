@@ -7,6 +7,7 @@ impl Book {
   pub fn new(name: &str) -> Self {
     Self { name: name.to_owned() }
   }
+
   pub fn name(&self) -> &str {
     &self.name
   }
@@ -18,11 +19,10 @@ pub struct BookShelf {
 }
 
 impl BookShelf {
-
   pub fn new(capacity: usize) -> Self {
     Self {
       values: Vec::with_capacity(capacity),
-      last: 0
+      last: 0,
     }
   }
 
@@ -49,7 +49,6 @@ impl BookShelf {
   pub fn iterator(&self) -> BookShelfIterator {
     BookShelfIterator::new(self)
   }
-
 }
 
 pub struct BookShelfIterator<'a> {
@@ -72,7 +71,7 @@ impl<'a> Iterator for BookShelfIterator<'a> {
         let t = Some(self.book_shelf.values[self.index].clone());
         self.index += 1;
         t
-      },
+      }
       false => None,
     }
   }
@@ -99,6 +98,5 @@ mod test {
     for book in book_shelf.iterator() {
       println!("{}", book.name())
     }
-
   }
 }

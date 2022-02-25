@@ -74,6 +74,7 @@ mod test {
     fn new(state: State) -> Self {
       Self { state }
     }
+
     fn run(&mut self) {
       let mut i = 0;
       for hour in 0..=24 {

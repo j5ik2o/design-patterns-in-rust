@@ -1,4 +1,4 @@
-#![feature(min_type_alias_impl_trait)]
+// #![feature(min_type_alias_impl_trait)]
 #![feature(generic_associated_types)]
 extern crate chrono;
 extern crate timer;
