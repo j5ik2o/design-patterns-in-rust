@@ -24,7 +24,7 @@ impl Display for BigChar {
 impl BigChar {
   fn read_font_data(char_name: char) -> Result<String> {
     println!("read_font_data: {}", char_name);
-    let file_name = format!("big{}.txt", char_name);
+    let file_name = format!("flyweight/big{}.txt", char_name);
     let mut reader = BufReader::new(File::open(file_name)?);
     let mut line: String = String::new();
     let mut buf = String::new();
