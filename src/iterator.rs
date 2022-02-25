@@ -46,19 +46,19 @@ impl BookShelf {
     self.last
   }
 
-  pub fn iterator(&mut self) -> BookShelfIterator {
+  pub fn iterator(&self) -> BookShelfIterator {
     BookShelfIterator::new(self)
   }
 
 }
 
 pub struct BookShelfIterator<'a> {
-  book_shelf: &'a mut BookShelf,
+  book_shelf: &'a BookShelf,
   index: usize,
 }
 
 impl<'a> BookShelfIterator<'a> {
-  pub fn new(book_shelf: &'a mut BookShelf) -> Self {
+  pub fn new(book_shelf: &'a BookShelf) -> Self {
     Self { book_shelf, index: 0 }
   }
 }
