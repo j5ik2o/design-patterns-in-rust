@@ -5,6 +5,7 @@ mod adaptor;
 mod bridge;
 mod builder;
 mod command;
+mod composite;
 mod decorator;
 mod factory_method;
 mod flyweight;
