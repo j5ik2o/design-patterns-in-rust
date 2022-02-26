@@ -63,17 +63,26 @@ impl<'a> BookShelfIterator<'a> {
 }
 
 impl<'a> Iterator for BookShelfIterator<'a> {
-  type Item = Book;
+  type Item = &'a Book;
 
   fn next(&mut self) -> Option<Self::Item> {
     match self.index < self.book_shelf.values.len() {
       true => {
-        let t = Some(self.book_shelf.values[self.index].clone());
+        let t = Some(&self.book_shelf.values[self.index]);
         self.index += 1;
         t
       }
       false => None,
     }
+  }
+}
+
+impl<'a> IntoIterator for &'a BookShelf {
+  type IntoIter = BookShelfIterator<'a>;
+  type Item = &'a Book;
+
+  fn into_iter(self) -> Self::IntoIter {
+    self.clone().iterator()
   }
 }
 
@@ -94,8 +103,7 @@ mod test {
       println!("{}", book.name())
     }
 
-    // TODO: IntoIteratorを実装して for book in book_shelf { ... } と書きたい。
-    for book in book_shelf.iterator() {
+    for book in &book_shelf {
       println!("{}", book.name())
     }
   }
