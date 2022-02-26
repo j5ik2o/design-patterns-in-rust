@@ -16,6 +16,7 @@ mod flyweight;
 mod iterator;
 mod observer;
 mod proxy;
+mod singleton;
 mod state;
 mod strategy;
 mod template_method;
