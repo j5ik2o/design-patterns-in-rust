@@ -98,11 +98,13 @@ mod test {
     book_shelf.append_book(Book::new("Cinderella"));
     book_shelf.append_book(Book::new("Daddy-Long-Legs"));
 
+    // Iteratorの実装によって可能になる
     let mut it = book_shelf.iter();
     while let Some(book) = it.next() {
       println!("{}", book.name())
     }
 
+    // IntoIteratorの実装によって可能になる
     for book in &book_shelf {
       println!("{}", book.name())
     }
