@@ -46,7 +46,7 @@ impl BookShelf {
     self.last
   }
 
-  pub fn iterator(&self) -> BookShelfIterator {
+  pub fn iter(&self) -> BookShelfIterator {
     BookShelfIterator::new(self)
   }
 }
@@ -82,7 +82,7 @@ impl<'a> IntoIterator for &'a BookShelf {
   type Item = &'a Book;
 
   fn into_iter(self) -> Self::IntoIter {
-    self.clone().iterator()
+    self.iter()
   }
 }
 
@@ -98,7 +98,7 @@ mod test {
     book_shelf.append_book(Book::new("Cinderella"));
     book_shelf.append_book(Book::new("Daddy-Long-Legs"));
 
-    let mut it = book_shelf.iterator();
+    let mut it = book_shelf.iter();
     while let Some(book) = it.next() {
       println!("{}", book.name())
     }
