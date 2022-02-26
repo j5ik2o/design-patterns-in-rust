@@ -14,6 +14,7 @@ mod decorator;
 mod factory_method;
 mod flyweight;
 mod iterator;
+mod mediator;
 mod observer;
 mod proxy;
 mod singleton;

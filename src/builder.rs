@@ -19,7 +19,7 @@ impl Director {
     Self { builder }
   }
 
-  pub fn construct(&self) {
+  pub fn build(&self) {
     let mut builder = self.builder.borrow_mut();
     builder.make_title("Greeting");
     builder.make_string("一般的なあいさつ");
@@ -136,7 +136,7 @@ mod test {
   fn test() {
     let builder = Rc::new(RefCell::new(TextBuilder::new()));
     let director = Director::new(builder.clone());
-    director.construct();
+    director.build();
     let builder_ref = builder.borrow();
     let result = builder_ref.get_text_result();
     println!("{}", result);

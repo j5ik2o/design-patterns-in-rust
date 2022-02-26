@@ -5,9 +5,20 @@ pub struct Singleton {
   name: String,
 }
 
-// 可変シングルトンがほしければ、Lazy<Mutex<A>>にする
+impl Singleton {
+  pub fn name(&self) -> &str {
+    &self.name
+  }
+}
+
 pub static SINGLETON: Lazy<Singleton> = Lazy::new(|| Singleton {
   name: "TEST".to_owned(),
+});
+
+pub static SINGLETON_MUT: Lazy<Mutex<Singleton>> = Lazy::new(|| {
+  Mutex::new(Singleton {
+    name: "TEST".to_owned(),
+  })
 });
 
 #[cfg(test)]
@@ -17,7 +28,15 @@ mod test {
 
   #[test]
   fn test() {
-    let s = &SINGLETON.borrow().name;
+    let si = &SINGLETON.borrow();
+    let s = si.name();
+    println!("name = {}", s);
+  }
+
+  #[test]
+  fn test_mut() {
+    let si = &SINGLETON_MUT.lock().unwrap();
+    let s = si.name();
     println!("name = {}", s);
   }
 }

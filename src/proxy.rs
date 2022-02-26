@@ -11,7 +11,7 @@ pub struct Printer {
 }
 
 impl Printer {
-  fn heavy_job(msg: String) {
+  fn heavy_job(msg: &str) {
     print!("{}", msg);
     for i in 0..5 {
       thread::sleep(time::Duration::from_millis(1000));
@@ -21,7 +21,7 @@ impl Printer {
   }
 
   pub fn new(name: &str) -> Self {
-    Self::heavy_job(format!("Printerのインスタンス({})を生成中", name));
+    Self::heavy_job(&format!("Printerのインスタンス({})を生成中", name));
     Self { name: name.to_owned() }
   }
 }
