@@ -252,8 +252,9 @@ pub mod static_binding {
   use crate::strategy::{Hand, Strategy};
   use std::fmt::{Display, Formatter};
 
-  // 静的結合の場合は型引数を指定する必要があるが、
-  // 扱いづらい。下手をするとジェネリクスヘルへ…。
+  // Player<T>として型が固定される問題がある
+  // Player<A>, Player<B>はそれぞれ別の型になる
+  // 型引数の取り回しもネックになりやすい
   pub struct Player<T: Strategy> {
     name: String,
     strategy: T,
