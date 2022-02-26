@@ -152,6 +152,10 @@ impl ProbeStrategy {
   }
 }
 
+// トレイトオブジェクトを使った動的結合 vs ジェネリクスとトレイト境界を使う静的結合
+// については、https://doc.rust-jp.rs/book-ja/ch17-02-trait-objects.html
+// 参照のこと
+
 mod dynamic_binding {
   use crate::strategy::{Hand, Strategy};
   use std::fmt::{Display, Formatter};
