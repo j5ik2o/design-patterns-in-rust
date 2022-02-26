@@ -6,6 +6,7 @@ extern crate timer;
 mod adaptor;
 mod bridge;
 mod builder;
+mod chain_of_responsibility;
 mod command;
 mod composite;
 mod decorator;
