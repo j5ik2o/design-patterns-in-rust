@@ -152,88 +152,187 @@ impl ProbeStrategy {
   }
 }
 
-pub struct Player {
-  name: String,
-  // ストラテジがPlayのみが所有するならBox、Play以外でも共有するならRc/Arcを使う
-  strategy: Box<dyn Strategy>,
-  win_count: u32,
-  lose_count: u32,
-  game_count: u32,
-}
+mod dynamic_binding {
+  use crate::strategy::{Hand, Strategy};
+  use std::fmt::{Display, Formatter};
 
-impl Display for Player {
-  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    let s = format!(
-      "[{}:, {} games, {} win, {} lose]",
-      self.name, self.game_count, self.win_count, self.lose_count
-    );
-    write!(f, "{}", s)
+  pub struct Player {
+    name: String,
+    // ストラテジがPlayのみが所有するならBox、Play以外でも共有するならRc/Arcを使う
+    strategy: Box<dyn Strategy>,
+    win_count: u32,
+    lose_count: u32,
+    game_count: u32,
   }
-}
 
-impl Player {
-  pub fn new(name: &str, strategy: Box<dyn Strategy>) -> Self {
-    Self {
-      name: name.to_owned(),
-      strategy,
-      win_count: 0,
-      lose_count: 0,
-      game_count: 0,
+  impl Display for Player {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+      let s = format!(
+        "[{}:, {} games, {} win, {} lose]",
+        self.name, self.game_count, self.win_count, self.lose_count
+      );
+      write!(f, "{}", s)
     }
   }
 
-  pub fn next_hand(&mut self) -> Option<Hand> {
-    self.strategy.next_hand()
-  }
-
-  pub fn win(&mut self) {
-    self.strategy.study(true);
-    self.win_count += 1;
-    self.game_count += 1;
-  }
-
-  pub fn lose(&mut self) {
-    self.strategy.study(false);
-    self.lose_count += 1;
-    self.game_count += 1;
-  }
-
-  pub fn even(&mut self) {
-    self.game_count += 1;
-  }
-}
-
-#[cfg(test)]
-mod test {
-  use super::*;
-
-  #[test]
-  fn test() {
-    let winning_strategy = WinningStrategy::new();
-    let probe_strategy = ProbeStrategy::new();
-
-    let mut player1 = Player::new("Taro", Box::new(winning_strategy));
-    let mut player2 = Player::new("Hana", Box::new(probe_strategy));
-
-    for _ in 0..10000 {
-      let next_hand1 = player1.next_hand().unwrap();
-      let next_hand2 = player2.next_hand().unwrap();
-      if next_hand1.is_stronger_than(next_hand2.clone()) {
-        println!("Winner:{}", player1);
-        player1.win();
-        player2.lose();
-      } else if next_hand2.is_stronger_than(next_hand1) {
-        println!("Winner:{}", player2);
-        player1.lose();
-        player2.win();
-      } else {
-        player1.even();
-        player2.even();
+  impl Player {
+    pub fn new(name: &str, strategy: Box<dyn Strategy>) -> Self {
+      Self {
+        name: name.to_owned(),
+        strategy,
+        win_count: 0,
+        lose_count: 0,
+        game_count: 0,
       }
     }
 
-    println!("Total result:");
-    println!("{}", player1);
-    println!("{}", player2);
+    pub fn next_hand(&mut self) -> Option<Hand> {
+      self.strategy.next_hand()
+    }
+
+    pub fn win(&mut self) {
+      self.strategy.study(true);
+      self.win_count += 1;
+      self.game_count += 1;
+    }
+
+    pub fn lose(&mut self) {
+      self.strategy.study(false);
+      self.lose_count += 1;
+      self.game_count += 1;
+    }
+
+    pub fn even(&mut self) {
+      self.game_count += 1;
+    }
+  }
+
+  #[cfg(test)]
+  mod test {
+    use super::*;
+    use crate::strategy::{ProbeStrategy, WinningStrategy};
+
+    #[test]
+    fn test() {
+      let winning_strategy = WinningStrategy::new();
+      let probe_strategy = ProbeStrategy::new();
+
+      let mut player1 = Player::new("Taro", Box::new(winning_strategy));
+      let mut player2 = Player::new("Hana", Box::new(probe_strategy));
+
+      for _ in 0..10000 {
+        let next_hand1 = player1.next_hand().unwrap();
+        let next_hand2 = player2.next_hand().unwrap();
+        if next_hand1.is_stronger_than(next_hand2.clone()) {
+          println!("Winner:{}", player1);
+          player1.win();
+          player2.lose();
+        } else if next_hand2.is_stronger_than(next_hand1) {
+          println!("Winner:{}", player2);
+          player1.lose();
+          player2.win();
+        } else {
+          player1.even();
+          player2.even();
+        }
+      }
+
+      println!("Total result:");
+      println!("{}", player1);
+      println!("{}", player2);
+    }
+  }
+}
+
+mod static_binding {
+  use crate::strategy::{Hand, Strategy};
+  use std::fmt::{Display, Formatter};
+
+  // 静的結合の場合は型引数を指定する必要があるが、
+  // 扱いづらい。下手をするとジェネリクスヘルへ…。
+  pub struct Player<T: Strategy> {
+    name: String,
+    strategy: T,
+    win_count: u32,
+    lose_count: u32,
+    game_count: u32,
+  }
+
+  impl<T: Strategy> Display for Player<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+      let s = format!(
+        "[{}:, {} games, {} win, {} lose]",
+        self.name, self.game_count, self.win_count, self.lose_count
+      );
+      write!(f, "{}", s)
+    }
+  }
+
+  impl<T: Strategy> Player<T> {
+    pub fn new(name: &str, strategy: T) -> Self {
+      Self {
+        name: name.to_owned(),
+        strategy,
+        win_count: 0,
+        lose_count: 0,
+        game_count: 0,
+      }
+    }
+
+    pub fn next_hand(&mut self) -> Option<Hand> {
+      self.strategy.next_hand()
+    }
+
+    pub fn win(&mut self) {
+      self.strategy.study(true);
+      self.win_count += 1;
+      self.game_count += 1;
+    }
+
+    pub fn lose(&mut self) {
+      self.strategy.study(false);
+      self.lose_count += 1;
+      self.game_count += 1;
+    }
+
+    pub fn even(&mut self) {
+      self.game_count += 1;
+    }
+  }
+
+  #[cfg(test)]
+  mod test {
+    use super::*;
+    use crate::strategy::{ProbeStrategy, WinningStrategy};
+
+    #[test]
+    fn test() {
+      let winning_strategy = WinningStrategy::new();
+      let probe_strategy = ProbeStrategy::new();
+
+      let mut player1 = Player::new("Taro", winning_strategy);
+      let mut player2 = Player::new("Hana", probe_strategy);
+
+      for _ in 0..10000 {
+        let next_hand1 = player1.next_hand().unwrap();
+        let next_hand2 = player2.next_hand().unwrap();
+        if next_hand1.is_stronger_than(next_hand2.clone()) {
+          println!("Winner:{}", player1);
+          player1.win();
+          player2.lose();
+        } else if next_hand2.is_stronger_than(next_hand1) {
+          println!("Winner:{}", player2);
+          player1.lose();
+          player2.win();
+        } else {
+          player1.even();
+          player2.even();
+        }
+      }
+
+      println!("Total result:");
+      println!("{}", player1);
+      println!("{}", player2);
+    }
   }
 }
