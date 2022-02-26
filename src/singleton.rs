@@ -5,6 +5,7 @@ pub struct Singleton {
   name: String,
 }
 
+// 可変シングルトンがほしければ、Lazy<Mutex<A>>にする
 pub static SINGLETON: Lazy<Singleton> = Lazy::new(|| Singleton {
   name: "TEST".to_owned(),
 });
