@@ -41,9 +41,9 @@ pub trait Support: SupportBase {
     if self.resolve(trouble) {
       self.done(trouble);
     } else if self.next().is_some() {
-      let n = self.next().unwrap();
-      let n_ref = (&*n).borrow();
-      n_ref.support(trouble);
+      let next_rc = self.next().unwrap();
+      let next_ref = (&*next_rc).borrow();
+      next_ref.support(trouble);
     } else {
       self.fail(trouble);
     }
