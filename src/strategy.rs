@@ -254,7 +254,7 @@ pub mod static_binding {
 
   // Player<T>として型が固定される問題がある
   // Player<A>, Player<B>はそれぞれ別の型になる
-  // 型引数の取り回しもネックになりやすい
+  // 型引数の引き回しもネックになりやすい
   pub struct Player<T: Strategy> {
     name: String,
     strategy: T,
