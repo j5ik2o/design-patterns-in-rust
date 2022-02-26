@@ -156,7 +156,7 @@ impl ProbeStrategy {
 // については、https://doc.rust-jp.rs/book-ja/ch17-02-trait-objects.html
 // 参照のこと
 
-mod dynamic_binding {
+pub mod dynamic_binding {
   use crate::strategy::{Hand, Strategy};
   use std::fmt::{Display, Formatter};
 
@@ -248,7 +248,7 @@ mod dynamic_binding {
   }
 }
 
-mod static_binding {
+pub mod static_binding {
   use crate::strategy::{Hand, Strategy};
   use std::fmt::{Display, Formatter};
 
