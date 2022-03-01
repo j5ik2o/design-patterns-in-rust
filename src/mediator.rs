@@ -19,8 +19,8 @@ pub struct ConcreteMediator {
 }
 
 impl ConcreteMediator {
-  pub fn new() -> ConcreteMediator {
-    ConcreteMediator {
+  pub fn new() -> Self {
+    Self {
       colleagues: HashMap::new(),
     }
   }
@@ -55,7 +55,6 @@ impl ConcreteColleagueA {
     }
   }
 }
-
 
 impl Colleague for ConcreteColleagueA {
   fn name(&self) -> &str {
@@ -101,7 +100,6 @@ impl Colleague for ConcreteColleagueB {
   }
 }
 
-
 #[cfg(test)]
 mod test {
   use super::*;
@@ -119,4 +117,3 @@ mod test {
     (&*colleague_b).borrow().run();
   }
 }
-
