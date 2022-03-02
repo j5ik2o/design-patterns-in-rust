@@ -52,6 +52,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "design-patterns-in-rust"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "once_cell",
+ "rand",
+ "timer",
+]
+
+[[package]]
 name = "fuchsia-cprng"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -201,17 +212,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "678054eb77286b51581ba43620cc911abf02758c91f93f479767aed0f90458b2"
 dependencies = [
  "rand_core 0.3.1",
-]
-
-[[package]]
-name = "rust-design-way"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "once_cell",
- "rand",
- "timer",
 ]
 
 [[package]]

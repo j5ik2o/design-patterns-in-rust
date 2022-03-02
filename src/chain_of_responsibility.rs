@@ -29,11 +29,11 @@ trait SupportBase: std::fmt::Display {
   fn fail(&self, trouble: &Trouble) {
     println!("{} cannot be resolved.", trouble);
   }
-  fn next(&self) -> Option<Rc<RefCell<dyn Support>>>;
+  fn next(&self) -> Option<Rc<dyn Support>>;
 }
 
 pub trait Support: SupportBase {
-  fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>>;
+  // fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>>;
 
   fn resolve(&self, trouble: &Trouble) -> bool;
 
@@ -42,7 +42,7 @@ pub trait Support: SupportBase {
       self.done(trouble);
     } else if self.next().is_some() {
       let next_rc = self.next().unwrap();
-      let next_ref = (&*next_rc).borrow();
+      let next_ref = (&*next_rc);
       next_ref.support(trouble);
     } else {
       self.fail(trouble);
@@ -54,14 +54,14 @@ pub trait Support: SupportBase {
 
 pub struct NoSupport {
   name: String,
-  next: Option<Rc<RefCell<dyn Support>>>,
+  next: Option<Rc<dyn Support>>,
 }
 
 impl NoSupport {
-  pub fn new(name: &str) -> Self {
+  pub fn new(name: &str, next: Option<Rc<dyn Support>>) -> Self {
     Self {
       name: name.to_owned(),
-      next: None,
+      next,
     }
   }
 }
@@ -73,17 +73,12 @@ impl Display for NoSupport {
 }
 
 impl SupportBase for NoSupport {
-  fn next(&self) -> Option<Rc<RefCell<dyn Support>>> {
+  fn next(&self) -> Option<Rc<dyn Support>> {
     self.next.clone()
   }
 }
 
 impl Support for NoSupport {
-  fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>> {
-    self.next = Some(next.clone());
-    next
-  }
-
   fn resolve(&self, trouble: &Trouble) -> bool {
     // print!("NoSupport: false ");
     false
@@ -94,22 +89,22 @@ impl Support for NoSupport {
 
 pub struct LimitSupport {
   name: String,
-  next: Option<Rc<RefCell<dyn Support>>>,
+  next: Option<Rc<dyn Support>>,
   limit: u32,
 }
 
 impl LimitSupport {
-  pub fn new(name: &str, limit: u32) -> Self {
+  pub fn new(name: &str, limit: u32, next: Option<Rc<dyn Support>>) -> Self {
     Self {
       name: name.to_owned(),
-      next: None,
+      next,
       limit,
     }
   }
 }
 
 impl SupportBase for LimitSupport {
-  fn next(&self) -> Option<Rc<RefCell<dyn Support>>> {
+  fn next(&self) -> Option<Rc<dyn Support>> {
     self.next.clone()
   }
 }
@@ -121,11 +116,6 @@ impl Display for LimitSupport {
 }
 
 impl Support for LimitSupport {
-  fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>> {
-    self.next = Some(next.clone());
-    next
-  }
-
   fn resolve(&self, trouble: &Trouble) -> bool {
     let result = if trouble.number() < self.limit { true } else { false };
     // print!("LimitSupport: {} ", result);
@@ -137,20 +127,20 @@ impl Support for LimitSupport {
 
 pub struct OddSupport {
   name: String,
-  next: Option<Rc<RefCell<dyn Support>>>,
+  next: Option<Rc<dyn Support>>,
 }
 
 impl OddSupport {
-  pub fn new(name: &str) -> Self {
+  pub fn new(name: &str, next: Option<Rc<dyn Support>>) -> Self {
     Self {
       name: name.to_owned(),
-      next: None,
+      next,
     }
   }
 }
 
 impl SupportBase for OddSupport {
-  fn next(&self) -> Option<Rc<RefCell<dyn Support>>> {
+  fn next(&self) -> Option<Rc<dyn Support>> {
     self.next.clone()
   }
 }
@@ -162,11 +152,6 @@ impl Display for OddSupport {
 }
 
 impl Support for OddSupport {
-  fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>> {
-    self.next = Some(next.clone());
-    next
-  }
-
   fn resolve(&self, trouble: &Trouble) -> bool {
     let result = if trouble.number() % 2 == 1 { true } else { false };
     // print!("OddSupport: {} ", result);
@@ -178,22 +163,22 @@ impl Support for OddSupport {
 
 pub struct SpecialSupport {
   name: String,
-  next: Option<Rc<RefCell<dyn Support>>>,
+  next: Option<Rc<dyn Support>>,
   number: u32,
 }
 
 impl SpecialSupport {
-  pub fn new(name: &str, number: u32) -> Self {
+  pub fn new(name: &str, number: u32, next: Option<Rc<dyn Support>>) -> Self {
     Self {
       name: name.to_owned(),
-      next: None,
+      next,
       number,
     }
   }
 }
 
 impl SupportBase for SpecialSupport {
-  fn next(&self) -> Option<Rc<RefCell<dyn Support>>> {
+  fn next(&self) -> Option<Rc<dyn Support>> {
     self.next.clone()
   }
 }
@@ -205,11 +190,6 @@ impl Display for SpecialSupport {
 }
 
 impl Support for SpecialSupport {
-  fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>> {
-    self.next = Some(next.clone());
-    next
-  }
-
   fn resolve(&self, trouble: &Trouble) -> bool {
     let result = if trouble.number() == self.number { true } else { false };
     // print!("SpecialSupport: {} ", result);
@@ -224,24 +204,12 @@ mod test {
 
   #[test]
   fn test() {
-    let mut alice = NoSupport::new("Alice");
-    let bob = Rc::new(RefCell::new(LimitSupport::new("Bob", 100)));
-    let charlie = Rc::new(RefCell::new(SpecialSupport::new("Charlie", 429)));
-    let diana = Rc::new(RefCell::new(LimitSupport::new("Diana", 200)));
-    let elmo = Rc::new(RefCell::new(OddSupport::new("Elmo")));
-    let fred = Rc::new(RefCell::new(LimitSupport::new("Fred", 300)));
-
-    // 連鎖の形成
-    alice
-      .set_next(bob)
-      .borrow_mut()
-      .set_next(charlie)
-      .borrow_mut()
-      .set_next(diana)
-      .borrow_mut()
-      .set_next(elmo)
-      .borrow_mut()
-      .set_next(fred);
+    let fred = Rc::new(LimitSupport::new("Fred", 300, None));
+    let elmo = Rc::new(OddSupport::new("Elmo", Some(fred)));
+    let diana = Rc::new(LimitSupport::new("Diana", 200, Some(elmo)));
+    let charlie = Rc::new(SpecialSupport::new("Charlie", 429, Some(diana)));
+    let bob = Rc::new(LimitSupport::new("Bob", 100, Some(charlie)));
+    let mut alice = NoSupport::new("Alice", Some(bob));
 
     for i in (0..500).step_by(33) {
       let t = Trouble::new(i);
