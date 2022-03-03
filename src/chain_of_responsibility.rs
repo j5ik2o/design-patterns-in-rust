@@ -33,8 +33,6 @@ trait SupportBase: std::fmt::Display {
 }
 
 pub trait Support: SupportBase {
-  // fn set_next(&mut self, next: Rc<RefCell<dyn Support>>) -> Rc<RefCell<dyn Support>>;
-
   fn resolve(&self, trouble: &Trouble) -> bool;
 
   fn support(&self, trouble: &Trouble) {
