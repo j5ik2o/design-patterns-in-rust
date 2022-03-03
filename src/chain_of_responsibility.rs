@@ -209,7 +209,7 @@ mod test {
     let diana = Rc::new(LimitSupport::new("Diana", 200, Some(elmo)));
     let charlie = Rc::new(SpecialSupport::new("Charlie", 429, Some(diana)));
     let bob = Rc::new(LimitSupport::new("Bob", 100, Some(charlie)));
-    let mut alice = NoSupport::new("Alice", Some(bob));
+    let alice = NoSupport::new("Alice", Some(bob));
 
     for i in (0..500).step_by(33) {
       let t = Trouble::new(i);
