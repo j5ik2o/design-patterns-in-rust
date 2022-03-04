@@ -21,5 +21,6 @@ mod singleton;
 mod state;
 mod strategy;
 mod template_method;
+mod visitor;
 
 fn main() {}

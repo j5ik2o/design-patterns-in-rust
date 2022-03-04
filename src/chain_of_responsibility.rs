@@ -40,7 +40,7 @@ pub trait Support: SupportBase {
       self.done(trouble);
     } else if self.next().is_some() {
       let next_rc = self.next().unwrap();
-      let next_ref = (&*next_rc);
+      let next_ref = &*next_rc;
       next_ref.support(trouble);
     } else {
       self.fail(trouble);
