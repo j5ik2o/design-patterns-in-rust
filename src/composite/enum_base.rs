@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::fmt::{Display, Formatter};
 use std::rc::Rc;
 
-struct File {
+pub struct File {
   name: String,
   size: usize,
 }
