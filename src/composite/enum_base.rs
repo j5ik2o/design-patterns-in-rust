@@ -21,7 +21,7 @@ impl Display for Entry {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     match self {
       Entry::FileEntry(file) => write!(f, "{}", file),
-      Entry::DirectoryEntry(Directory { name, .. }) => write!(f, "{} ({})", name, self.get_size()),
+      Entry::DirectoryEntry(directory) => write!(f, "{}", directory),
     }
   }
 }
