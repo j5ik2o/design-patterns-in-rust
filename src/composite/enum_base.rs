@@ -13,15 +13,15 @@ pub struct Directory {
 }
 
 pub enum Entry {
-  FileEntry(File),
-  DirectoryEntry(Directory),
+  File(File),
+  Directory(Directory),
 }
 
 impl Display for Entry {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     match self {
-      Entry::FileEntry(file) => write!(f, "{}", file),
-      Entry::DirectoryEntry(directory) => write!(f, "{}", directory),
+      Entry::File(file) => write!(f, "{}", file),
+      Entry::Directory(directory) => write!(f, "{}", directory),
     }
   }
 }
@@ -75,15 +75,15 @@ impl Directory {
 }
 
 impl Entry {
-  fn of_file(name: &str, size: usize) -> Self {
-    Entry::FileEntry(File {
+  pub fn of_file(name: &str, size: usize) -> Self {
+    Entry::File(File {
       name: name.to_owned(),
       size,
     })
   }
 
-  fn of_directory(name: &str) -> Self {
-    Entry::DirectoryEntry(Directory {
+  pub fn of_directory(name: &str) -> Self {
+    Entry::Directory(Directory {
       name: name.to_owned(),
       entries: vec![],
     })
@@ -91,22 +91,22 @@ impl Entry {
 
   fn print_line_with_prefix(&self, prefix: &str) {
     match self {
-      Entry::FileEntry(f) => f.print_line_with_prefix(prefix),
-      Entry::DirectoryEntry(d) => d.print_line_with_prefix(prefix),
+      Entry::File(f) => f.print_line_with_prefix(prefix),
+      Entry::Directory(d) => d.print_line_with_prefix(prefix),
     }
   }
 
   pub fn get_name(&self) -> &str {
     match self {
-      Entry::FileEntry(f) => f.get_name(),
-      Entry::DirectoryEntry(d) => d.get_name(),
+      Entry::File(f) => f.get_name(),
+      Entry::Directory(d) => d.get_name(),
     }
   }
 
   pub fn get_size(&self) -> usize {
     match self {
-      Entry::FileEntry(f) => f.get_size(),
-      Entry::DirectoryEntry(d) => d.get_size(),
+      Entry::File(f) => f.get_size(),
+      Entry::Directory(d) => d.get_size(),
     }
   }
 
@@ -116,21 +116,21 @@ impl Entry {
 
   pub fn as_file(&self) -> Option<&File> {
     match self {
-      Entry::FileEntry(d) => Some(d),
+      Entry::File(d) => Some(d),
       _ => None,
     }
   }
 
   pub fn as_directory(&self) -> Option<&Directory> {
     match self {
-      Entry::DirectoryEntry(d) => Some(d),
+      Entry::Directory(d) => Some(d),
       _ => None,
     }
   }
 
   pub fn as_directory_mut(&mut self) -> Option<&mut Directory> {
     match self {
-      Entry::DirectoryEntry(d) => Some(d),
+      Entry::Directory(d) => Some(d),
       _ => None,
     }
   }
