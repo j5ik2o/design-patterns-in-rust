@@ -1,9 +1,11 @@
 use std::collections::VecDeque;
+use std::fmt::Debug;
 
-pub trait Command {
+pub trait Command: Debug {
   fn execute(&self);
 }
 
+#[derive(Debug)]
 pub struct MacroCommand {
   commands: VecDeque<Box<dyn Command>>,
 }
@@ -41,7 +43,9 @@ impl MacroCommand {
 #[cfg(test)]
 mod test {
   use super::*;
+  use std::fmt::Formatter;
 
+  #[derive(Debug)]
   struct EchoCommand {
     msg: String,
   }

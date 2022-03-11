@@ -14,6 +14,7 @@ pub trait AbstractDisplay: Operation {
   }
 }
 
+#[derive(Debug)]
 pub struct CharDisplay(char);
 
 impl CharDisplay {
@@ -38,6 +39,7 @@ impl Operation for CharDisplay {
 
 impl AbstractDisplay for CharDisplay {}
 
+#[derive(Debug)]
 pub struct StringDisplay(String);
 
 impl StringDisplay {

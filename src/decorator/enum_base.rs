@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub enum Display {
   String(String),
   SideBorder(Rc<Display>, char),

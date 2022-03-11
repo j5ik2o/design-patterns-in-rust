@@ -3,6 +3,7 @@ pub trait Print {
   fn print_strong(&self);
 }
 
+#[derive(Debug)]
 pub struct Banner(String);
 
 impl Banner {
@@ -19,6 +20,7 @@ impl Banner {
   }
 }
 
+#[derive(Debug)]
 pub struct PrintBanner(Banner);
 
 impl PrintBanner {

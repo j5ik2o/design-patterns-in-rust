@@ -6,6 +6,7 @@ pub trait Printable {
   fn print(&mut self, text: &str);
 }
 
+#[derive(Debug)]
 pub struct Printer {
   name: String,
 }
@@ -41,6 +42,7 @@ impl Printable for Printer {
   }
 }
 
+#[derive(Debug)]
 pub struct PrinterProxy {
   name: String,
   underlying: Option<Printer>,

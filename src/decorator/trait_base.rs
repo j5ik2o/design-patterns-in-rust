@@ -1,6 +1,7 @@
+use std::fmt::Debug;
 use std::rc::Rc;
 
-pub trait Display {
+pub trait Display: Debug {
   fn get_columns(&self) -> usize;
   fn get_rows(&self) -> u32;
   fn get_row_text(&self, row: u32) -> String;
@@ -13,6 +14,7 @@ pub trait Display {
   }
 }
 
+#[derive(Debug)]
 pub struct StringDisplay(String);
 
 impl StringDisplay {
@@ -40,6 +42,7 @@ impl Display for StringDisplay {
 
 pub trait Border: Display {}
 
+#[derive(Debug)]
 pub struct FullBorder {
   underlying: Rc<dyn Display>,
 }
@@ -78,6 +81,7 @@ impl Display for FullBorder {
   }
 }
 
+#[derive(Debug)]
 pub struct SideBorder {
   underlying: Rc<dyn Display>,
   border_char: char,

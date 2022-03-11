@@ -15,6 +15,7 @@ pub trait State<C>: Display {
   fn do_phone(&self, context: &C);
 }
 
+#[derive(Debug)]
 pub struct Day;
 
 impl Display for Day {

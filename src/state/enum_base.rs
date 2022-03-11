@@ -7,7 +7,7 @@ pub trait Context {
   fn record_log(&self, msg: &str);
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum State {
   Day,
   Night,

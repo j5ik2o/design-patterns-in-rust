@@ -1,15 +1,17 @@
 use std::cell::RefCell;
+use std::fmt::Debug;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::rc::Rc;
 
-pub trait Builder {
+pub trait Builder: Debug {
   fn make_title(&mut self, title: &str);
   fn make_string(&mut self, str: &str);
   fn make_items(&mut self, items: &[&str]);
   fn close(&mut self);
 }
 
+#[derive(Debug)]
 pub struct Director {
   builder: Rc<RefCell<dyn Builder>>,
 }
@@ -31,6 +33,7 @@ impl Director {
   }
 }
 
+#[derive(Debug)]
 pub struct TextBuilder {
   string: String,
 }
@@ -72,6 +75,7 @@ impl Builder for TextBuilder {
   }
 }
 
+#[derive(Debug)]
 pub struct HtmlBuilder {
   file_name: Option<String>,
   string: String,

@@ -1,5 +1,6 @@
 use std::borrow::Borrow;
 use std::cell::RefCell;
+use std::fmt::Debug;
 use std::rc::Rc;
 
 pub trait Visitor {
@@ -8,10 +9,11 @@ pub trait Visitor {
   fn visit_hyperlink(&mut self, hyperlink: &HyperLink);
 }
 
-pub trait Element {
+pub trait Element: Debug {
   fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>);
 }
 
+#[derive(Debug)]
 pub struct Title {
   text: String,
 }
@@ -28,6 +30,7 @@ impl Element for Title {
   }
 }
 
+#[derive(Debug)]
 pub struct Text {
   text: String,
 }
@@ -44,6 +47,7 @@ impl Element for Text {
   }
 }
 
+#[derive(Debug)]
 pub struct HyperLink {
   text: String,
   url: String,
@@ -64,6 +68,7 @@ impl Element for HyperLink {
   }
 }
 
+#[derive(Debug)]
 pub struct Document {
   parts: Vec<Rc<dyn Element>>,
 }
@@ -82,6 +87,7 @@ impl Document {
   }
 }
 
+#[derive(Debug)]
 pub struct HtmlExporterVisitor {
   builder: String,
 }
@@ -112,6 +118,7 @@ impl Visitor for HtmlExporterVisitor {
   }
 }
 
+#[derive(Debug)]
 pub struct PlainTextExporterVisitor {
   builder: String,
 }

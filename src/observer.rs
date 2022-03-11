@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::thread::Thread;
 use std::{thread, time};
 
@@ -12,6 +13,7 @@ pub trait NumberGenerator {
   fn execute(&mut self);
 }
 
+#[derive(Debug)]
 pub struct RandomNumberGenerator {
   observers: Vec<Box<dyn Observer>>,
   rng: ThreadRng,
@@ -64,10 +66,11 @@ impl NumberGenerator for RandomNumberGenerator {
   }
 }
 
-pub trait Observer {
+pub trait Observer: Debug {
   fn update(&self, generator: &dyn NumberGenerator);
 }
 
+#[derive(Debug)]
 pub struct DigitObserver;
 
 impl DigitObserver {
@@ -83,6 +86,7 @@ impl Observer for DigitObserver {
   }
 }
 
+#[derive(Debug)]
 pub struct GraphObserver;
 
 impl GraphObserver {

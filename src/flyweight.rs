@@ -8,6 +8,7 @@ use std::sync::Mutex;
 use anyhow::Result;
 use once_cell::sync::OnceCell;
 
+#[derive(Debug)]
 pub struct BigChar {
   char_name: char,
   font_data: String,
@@ -44,6 +45,7 @@ impl BigChar {
   }
 }
 
+#[derive(Debug)]
 pub struct BigCharFactory {
   pool: HashMap<char, Rc<BigChar>>,
 }
@@ -66,6 +68,7 @@ impl BigCharFactory {
 
 pub static BIG_CHAR_FACTORY_SINGLETON: OnceCell<Mutex<BigCharFactory>> = OnceCell::new();
 
+#[derive(Debug)]
 pub struct BigString {
   big_chars: Vec<Rc<BigChar>>,
 }

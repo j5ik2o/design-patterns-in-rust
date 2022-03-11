@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 pub trait Display {
   fn open(&mut self);
   fn print(&self);
@@ -5,6 +7,7 @@ pub trait Display {
   fn display(&mut self);
 }
 
+#[derive(Debug)]
 pub struct DisplayDefault {
   underlying: Box<dyn DisplayImpl>,
 }
@@ -35,6 +38,7 @@ impl Display for DisplayDefault {
   }
 }
 
+#[derive(Debug)]
 pub struct CountDisplay {
   underlying: DisplayDefault,
 }
@@ -73,12 +77,13 @@ impl Display for CountDisplay {
   }
 }
 
-pub trait DisplayImpl {
+pub trait DisplayImpl: Debug {
   fn raw_open(&mut self);
   fn raw_print(&self);
   fn raw_close(&mut self);
 }
 
+#[derive(Debug)]
 pub struct StringDisplayImpl {
   string: String,
   width: u32,

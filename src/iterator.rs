@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Book {
   name: String,
 }
@@ -13,6 +13,7 @@ impl Book {
   }
 }
 
+#[derive(Debug)]
 pub struct BookShelf {
   values: Vec<Book>,
   last: usize,

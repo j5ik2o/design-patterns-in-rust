@@ -6,7 +6,7 @@ trait EntryBase {
   fn print_line_with_prefix(&self, prefix: &str);
 }
 
-pub trait Entry: EntryBase + Display {
+pub trait Entry: EntryBase + Display + Debug {
   fn get_name(&self) -> &str;
   fn get_size(&self) -> usize;
   fn print_line(&self) {
@@ -14,6 +14,7 @@ pub trait Entry: EntryBase + Display {
   }
 }
 
+#[derive(Debug)]
 pub struct File {
   name: String,
   size: usize,
@@ -50,6 +51,7 @@ impl Entry for File {
   }
 }
 
+#[derive(Debug)]
 pub struct Directory {
   name: String,
   entries: Vec<Rc<RefCell<dyn Entry>>>,

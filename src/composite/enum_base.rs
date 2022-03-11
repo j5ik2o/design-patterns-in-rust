@@ -2,16 +2,19 @@ use std::cell::RefCell;
 use std::fmt::{Display, Formatter};
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct File {
   name: String,
   size: usize,
 }
 
+#[derive(Debug)]
 pub struct Directory {
   name: String,
   entries: Vec<Rc<RefCell<Entry>>>,
 }
 
+#[derive(Debug)]
 pub enum Entry {
   File(File),
   Directory(Directory),

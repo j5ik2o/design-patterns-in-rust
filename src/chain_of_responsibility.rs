@@ -1,7 +1,8 @@
 use std::cell::RefCell;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct Trouble {
   number: u32,
 }
@@ -22,7 +23,7 @@ impl Trouble {
   }
 }
 
-trait SupportBase: std::fmt::Display {
+trait SupportBase: std::fmt::Display + Debug {
   fn done(&self, trouble: &Trouble) {
     println!("{} is resolved by {}.", trouble, self);
   }
@@ -50,6 +51,7 @@ pub trait Support: SupportBase {
 
 // ---
 
+#[derive(Debug)]
 pub struct NoSupport {
   name: String,
   next: Option<Rc<dyn Support>>,
@@ -85,6 +87,7 @@ impl Support for NoSupport {
 
 // ---
 
+#[derive(Debug)]
 pub struct LimitSupport {
   name: String,
   next: Option<Rc<dyn Support>>,
@@ -123,6 +126,7 @@ impl Support for LimitSupport {
 
 // ---
 
+#[derive(Debug)]
 pub struct OddSupport {
   name: String,
   next: Option<Rc<dyn Support>>,
@@ -159,6 +163,7 @@ impl Support for OddSupport {
 
 // ---
 
+#[derive(Debug)]
 pub struct SpecialSupport {
   name: String,
   next: Option<Rc<dyn Support>>,

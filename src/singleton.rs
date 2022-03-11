@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
+#[derive(Debug)]
 pub struct Singleton {
   name: String,
 }

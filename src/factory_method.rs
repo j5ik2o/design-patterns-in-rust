@@ -18,6 +18,7 @@ pub trait Factory: FactoryBase {
   }
 }
 
+#[derive(Debug)]
 pub struct IdCard {
   owner: String,
 }
@@ -47,6 +48,7 @@ impl Product for IdCard {
   }
 }
 
+#[derive(Debug)]
 pub struct IdCardFactory;
 
 impl IdCardFactory {
