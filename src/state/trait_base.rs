@@ -71,62 +71,61 @@ impl<C: Context> State<C> for Night {
     context.record_log("夜間の通話録音");
   }
 }
+#[derive(Clone)]
+struct StateContext {
+  state: Rc<dyn State<StateContext>>,
+}
+
+impl StateContext {
+  fn new(state: Rc<dyn State<StateContext>>) -> Self {
+    Self { state }
+  }
+
+  fn run(&mut self) {
+    let mut i = 0;
+    for hour in 0..=24 {
+      self.set_clock(hour);
+      match i {
+        0 => {
+          self.state.do_use(self);
+          i = 1;
+        }
+        1 => {
+          self.state.do_alarm(self);
+          i = 2;
+        }
+        2 => {
+          self.state.do_phone(self);
+          i = 0;
+        }
+        _ => panic!("iae"),
+      }
+    }
+  }
+}
+
+impl Context for StateContext {
+  fn set_clock(&mut self, hour: u32) {
+    let mut current_state = self.state.clone();
+    current_state.do_clock(self, hour);
+  }
+
+  fn change_state(&mut self, state: Rc<dyn State<StateContext>>) {
+    self.state = state;
+  }
+
+  fn call_security_center(&self, msg: &str) {
+    println!("{}:{}", self.state, msg);
+  }
+
+  fn record_log(&self, msg: &str) {
+    println!("{}:{}", self.state, msg);
+  }
+}
 
 #[cfg(test)]
 mod test {
   use super::*;
-
-  #[derive(Clone)]
-  struct StateContext {
-    state: Rc<dyn State<StateContext>>,
-  }
-
-  impl StateContext {
-    fn new(state: Rc<dyn State<StateContext>>) -> Self {
-      Self { state }
-    }
-
-    fn run(&mut self) {
-      let mut i = 0;
-      for hour in 0..=24 {
-        self.set_clock(hour);
-        match i {
-          0 => {
-            self.state.do_use(self);
-            i = 1;
-          }
-          1 => {
-            self.state.do_alarm(self);
-            i = 2;
-          }
-          2 => {
-            self.state.do_phone(self);
-            i = 0;
-          }
-          _ => panic!("iae"),
-        }
-      }
-    }
-  }
-
-  impl Context for StateContext {
-    fn set_clock(&mut self, hour: u32) {
-      let mut current_state = self.state.clone();
-      current_state.do_clock(self, hour);
-    }
-
-    fn change_state(&mut self, state: Rc<dyn State<StateContext>>) {
-      self.state = state;
-    }
-
-    fn call_security_center(&self, msg: &str) {
-      println!("{}:{}", self.state, msg);
-    }
-
-    fn record_log(&self, msg: &str) {
-      println!("{}:{}", self.state, msg);
-    }
-  }
 
   #[test]
   fn test() {
