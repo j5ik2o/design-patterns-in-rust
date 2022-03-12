@@ -31,11 +31,11 @@ mod test {
   #[test]
   fn test() {
     // BannerをPrintとして扱える
-    let p: &dyn Print = &PrintBanner::new(Banner::new("Hello"));
+    let print_banner = PrintBanner::new(Banner::new("Hello"));
     fn print(p: &dyn Print) {
       p.print_weak();
       p.print_strong();
     }
-    print(p)
+    print(&print_banner)
   }
 }
