@@ -2,15 +2,16 @@ use std::collections::VecDeque;
 
 pub enum Command {
   Echo(String),
+  Double(String),
   Macro(MacroCommand),
 }
 
 pub struct MacroCommand {
-  commands: VecDeque<Box<Command>>,
+  commands: VecDeque<Command>,
 }
 
 impl MacroCommand {
-  pub fn append(&mut self, cmd: Box<Command>) {
+  pub fn append(&mut self, cmd: Command) {
     self.commands.push_back(cmd);
   }
 
@@ -30,7 +31,7 @@ impl Command {
     Command::Echo(s.to_owned())
   }
 
-  pub fn of_macro(commands: VecDeque<Box<Command>>) -> Self {
+  pub fn of_macro(commands: VecDeque<Command>) -> Self {
     Command::Macro(MacroCommand { commands })
   }
 
@@ -57,6 +58,7 @@ impl Command {
   pub fn execute(&self) {
     match self {
       Command::Echo(s) => println!("{}", s),
+      Command::DoubleEcho(s) => println!("{}{}", s, s),
       Command::Macro(MacroCommand { commands }) => {
         for cmd in commands {
           cmd.execute();
@@ -74,7 +76,7 @@ mod test {
   #[test]
   fn test() {
     let mut mc = Command::of_macro_with_empty_commands();
-    mc.as_macro_mut().unwrap().append(Box::new(Command::of_echo("Hello")));
+    mc.as_macro_mut().unwrap().append(Command::of_echo("Hello"));
     mc.execute();
   }
 }
