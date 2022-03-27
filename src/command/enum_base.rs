@@ -58,7 +58,7 @@ impl Command {
   pub fn execute(&self) {
     match self {
       Command::Echo(s) => println!("{}", s),
-      Command::DoubleEcho(s) => println!("{}{}", s, s),
+      Command::Double(s) => println!("{}{}", s, s),
       Command::Macro(MacroCommand { commands }) => {
         for cmd in commands {
           cmd.execute();

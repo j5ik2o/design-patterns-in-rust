@@ -40,25 +40,34 @@ impl Operation for CharDisplay {
 impl AbstractDisplay for CharDisplay {}
 
 #[derive(Debug)]
-pub struct StringDisplay(String);
+pub struct StringDisplay(String, usize);
 
 impl StringDisplay {
   pub fn new(s: String) -> Self {
-    Self(s)
+    let w = s.len();
+    Self(s, w)
+  }
+
+  fn print_line(&self) {
+    print!("+");
+    for _ in 0..self.1 {
+      print!("-");
+    }
+    println!("+");
   }
 }
 
 impl Operation for StringDisplay {
   fn open(&self) {
-    print!("<<");
+    self.print_line();
   }
 
   fn print(&self) {
-    print!("{}", self.0);
+    println!("|{}|", self.0);
   }
 
   fn close(&self) {
-    println!(">>");
+    self.print_line();
   }
 }
 
