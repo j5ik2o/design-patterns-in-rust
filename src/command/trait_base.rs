@@ -31,7 +31,7 @@ impl MacroCommand {
 
   pub fn undo(&mut self) {
     if !self.commands.is_empty() {
-      self.commands.pop_front();
+      self.commands.pop_back();
     }
   }
 
