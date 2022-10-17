@@ -19,7 +19,7 @@ pub struct WinningStrategy {
 impl Strategy for WinningStrategy {
   fn next_hand(&mut self) -> Option<Hand> {
     if !self.won {
-      self.prev_hand = Some(Hand::get_hand(self.rng.gen_range(0, 2)))
+      self.prev_hand = Some(Hand::get_hand(self.rng.gen_range(0..=2)))
     }
     self.prev_hand.clone()
   }
@@ -50,7 +50,7 @@ pub struct ProbeStrategy {
 
 impl Strategy for ProbeStrategy {
   fn next_hand(&mut self) -> Option<Hand> {
-    let bet = self.rng.gen_range(0, self.get_sum(self.current_hand_value));
+    let bet = self.rng.gen_range(0..=self.get_sum(self.current_hand_value));
     let hand_value = if bet < self.history[self.current_hand_value as usize][0] {
       0
     } else if bet

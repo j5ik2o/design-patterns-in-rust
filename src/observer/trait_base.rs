@@ -60,7 +60,7 @@ impl NumberGenerator for RandomNumberGenerator {
 
   fn execute(&mut self) {
     for _ in 0..20 {
-      self.number = self.rng.gen_range(0, 49);
+      self.number = self.rng.gen_range(0..=49);
       self.notify_observers();
     }
   }

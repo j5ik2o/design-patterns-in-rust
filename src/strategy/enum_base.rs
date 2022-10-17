@@ -51,7 +51,7 @@ impl Strategy {
         rng, won, prev_hand, ..
       } => {
         if !*won {
-          *prev_hand = Some(Hand::get_hand(rng.gen_range(0, 2)))
+          *prev_hand = Some(Hand::get_hand(rng.gen_range(0..=2)))
         }
         prev_hand.clone()
       }
@@ -62,7 +62,7 @@ impl Strategy {
         history,
         ..
       } => {
-        let bet = rng.gen_range(0, Self::get_sum(history, *current_hand_value));
+        let bet = rng.gen_range(0..=Self::get_sum(history, *current_hand_value));
         let hand_value = if bet < history[*current_hand_value as usize][0] {
           0
         } else if bet < history[*current_hand_value as usize][0] + history[*current_hand_value as usize][1] {

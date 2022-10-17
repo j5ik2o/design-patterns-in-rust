@@ -94,7 +94,7 @@ impl RandomNumberNumberGenerator {
   fn execute(&mut self) {
     for _ in 0..20 {
       let mut g = (&*self.inner).borrow_mut();
-      g.number = g.rng.gen_range(0, 49);
+      g.number = g.rng.gen_range(0..=49);
       drop(g);
       self.notify_observers();
     }
