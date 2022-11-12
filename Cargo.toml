@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = "1.0.66"
 once_cell = "1.16.0"
 rand = "0.8"
-chrono = "0.4.22"
+chrono = "0.4.23"
 timer = "0.2.0"
 
 [dev-dependencies]
