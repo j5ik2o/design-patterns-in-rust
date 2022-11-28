@@ -47,11 +47,11 @@ impl Display for DisplayType {
     }
 }
 
-pub struct Operation<T> {
+pub struct Template<T> {
     display: T,
 }
 
-impl<T: Display> Operation<T> {
+impl<T: Display> Template<T> {
     pub fn new(display: T) -> Self {
         Self { display }
     }
@@ -74,7 +74,7 @@ mod test {
         let d1 = DisplayType::Char('H');
         let d2 = DisplayType::String("Hello,world.".to_owned());
 
-        Operation::new(d1).display();
-        Operation::new(d2).display();
+        Template::new(d1).display();
+        Template::new(d2).display();
     }
 }
