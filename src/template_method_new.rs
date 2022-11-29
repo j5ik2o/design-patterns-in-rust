@@ -1,11 +1,5 @@
 use std::fmt::Display;
 
-pub trait Printer {
-  fn open(&self);
-  fn print(&self);
-  fn close(&self);
-}
-
 pub enum DisplayType {
   Char(char),
   String(String),
@@ -32,9 +26,7 @@ impl DisplayType {
       }
     }
   }
-}
 
-impl Printer for DisplayType {
   fn open(&self) {
     match self {
       DisplayType::Char(..) => print!("<<"),
