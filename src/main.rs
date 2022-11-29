@@ -21,8 +21,8 @@ mod proxy;
 mod singleton;
 mod state;
 mod strategy;
+mod template_method_new;
 mod template_method_old;
 mod visitor;
-mod template_method_new;
 
 fn main() {}
