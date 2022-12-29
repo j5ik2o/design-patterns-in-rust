@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.68"
-once_cell = "1.16.0"
+once_cell = "1.17.0"
 rand = "0.8"
 chrono = "0.4.23"
 timer = "0.2.0"
