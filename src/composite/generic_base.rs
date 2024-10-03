@@ -121,12 +121,12 @@ mod test {
       // bindir_ref.print_line();
     }
 
-    let mut yuki = Rc::new(RefCell::new(Directory::new("yuki")));
-    let mut hanako = Rc::new(RefCell::new(Directory::new("hanako")));
-    let mut tomura = Rc::new(RefCell::new(Directory::new("tomura")));
+    let yuki = Rc::new(RefCell::new(Directory::new("yuki")));
+    let hanako = Rc::new(RefCell::new(Directory::new("hanako")));
+    let tomura = Rc::new(RefCell::new(Directory::new("tomura")));
 
     {
-      let mut usrdir_ref = (&*usrdir).borrow_mut();
+      let usrdir_ref = (&*usrdir).borrow_mut();
       // userdirにはファイルしか追加できないが、ここでディレクトリを追加しようとしているので、このコードはコンパイルできない
       // usrdir_ref.add(yuki.clone());
       // usrdir_ref.add(hanako.clone());

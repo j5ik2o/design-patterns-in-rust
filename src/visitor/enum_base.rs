@@ -145,7 +145,7 @@ impl Document {
 #[cfg(test)]
 mod test {
   use super::*;
-  use std::borrow::Borrow;
+  
 
   #[test]
   fn test() {

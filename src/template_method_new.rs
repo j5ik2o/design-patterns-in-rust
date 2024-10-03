@@ -1,4 +1,3 @@
-use std::fmt::Display;
 
 pub enum DisplayType {
   Char(char),

@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::thread::Thread;
 use std::{thread, time};
 
 use rand::prelude::ThreadRng;

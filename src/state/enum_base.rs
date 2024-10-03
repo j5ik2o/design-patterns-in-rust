@@ -95,7 +95,7 @@ impl StateContext {
 
 impl Context for StateContext {
   fn set_clock(&mut self, hour: u32) {
-    let mut current_state = self.state.clone();
+    let current_state = self.state.clone();
     current_state.do_clock(self, hour);
   }
 

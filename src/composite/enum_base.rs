@@ -170,9 +170,9 @@ mod test {
       // bindir_ref.print_line();
     }
 
-    let mut yuki = Rc::new(RefCell::new(Entry::of_directory("yuki")));
-    let mut hanako = Rc::new(RefCell::new(Entry::of_directory("hanako")));
-    let mut tomura = Rc::new(RefCell::new(Entry::of_directory("tomura")));
+    let yuki = Rc::new(RefCell::new(Entry::of_directory("yuki")));
+    let hanako = Rc::new(RefCell::new(Entry::of_directory("hanako")));
+    let tomura = Rc::new(RefCell::new(Entry::of_directory("tomura")));
 
     {
       let mut usrdir_ref = (&*usrdir).borrow_mut();
