@@ -42,7 +42,7 @@ impl NumberGenerator for RandomNumberGenerator {
       .position(|e| {
         let p1: *const dyn Observer = &**e;
         let p2: *const dyn Observer = &*observer;
-        p1 == p2
+        std::ptr::addr_eq(p1, p2)
       })
       .unwrap();
     self.observers.remove(index);
@@ -102,7 +102,7 @@ impl Observer for GraphObserver {
     for _ in 0..count {
       print!("*");
     }
-    println!("");
+    println!();
     thread::sleep(time::Duration::from_millis(100));
   }
 }

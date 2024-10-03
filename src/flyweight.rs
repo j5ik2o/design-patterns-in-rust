@@ -33,7 +33,7 @@ impl BigChar {
       if size == 0 {
         break;
       }
-      buf.push_str(&*line);
+      buf.push_str(&line);
       line.clear();
     }
     Ok(buf.to_string())

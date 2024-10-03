@@ -128,9 +128,7 @@ impl Display for LimitSupport {
 
 impl SupportBehavior for LimitSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() < self.limit { true } else { false };
-    // print!("LimitSupport: {} ", result);
-    result
+    trouble.number() < self.limit
   }
 }
 
@@ -163,9 +161,7 @@ impl Display for OddSupport {
 
 impl SupportBehavior for OddSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() % 2 == 1 { true } else { false };
-    // print!("OddSupport: {} ", result);
-    result
+    trouble.number() % 2 == 1
   }
 }
 
@@ -200,9 +196,7 @@ impl Display for SpecialSupport {
 
 impl SupportBehavior for SpecialSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() == self.number { true } else { false };
-    // print!("SpecialSupport: {} ", result);
-    result
+    trouble.number() == self.number
   }
 }
 

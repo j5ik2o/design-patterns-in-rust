@@ -1,11 +1,33 @@
-use std::fmt::{Display, Formatter};
-
-use crate::strategy::Hand;
 use rand::prelude::*;
 use rand::Rng;
+use std::fmt::{Display, Formatter};
+
+#[derive(Clone, Copy, Debug)]
+pub enum Hand {
+  Rock,
+  Paper,
+  Scissors,
+}
+
+impl Hand {
+  fn get_hand(value: u8) -> Self {
+    match value {
+      0 => Hand::Rock,
+      1 => Hand::Paper,
+      _ => Hand::Scissors,
+    }
+  }
+
+  fn is_stronger_than(&self, other: Hand) -> bool {
+    matches!(
+      (self, other),
+      (Hand::Rock, Hand::Scissors) | (Hand::Scissors, Hand::Paper) | (Hand::Paper, Hand::Rock)
+    )
+  }
+}
 
 pub trait Strategy {
-  fn next_hand(&mut self) -> Option<Hand>;
+  fn next_hand(&mut self) -> Hand;
   fn study(&mut self, win: bool);
 }
 
@@ -13,15 +35,15 @@ pub trait Strategy {
 pub struct WinningStrategy {
   rng: ThreadRng,
   won: bool,
-  prev_hand: Option<Hand>,
+  prev_hand: Hand,
 }
 
 impl Strategy for WinningStrategy {
-  fn next_hand(&mut self) -> Option<Hand> {
+  fn next_hand(&mut self) -> Hand {
     if !self.won {
-      self.prev_hand = Some(Hand::get_hand(self.rng.gen_range(0..=2)))
+      self.prev_hand = Hand::get_hand(self.rng.gen_range(0..=2))
     }
-    self.prev_hand.clone()
+    self.prev_hand
   }
 
   fn study(&mut self, win: bool) {
@@ -31,11 +53,10 @@ impl Strategy for WinningStrategy {
 
 impl WinningStrategy {
   pub fn new() -> Self {
-    let rng: ThreadRng = rand::thread_rng();
     Self {
-      rng,
+      rng: rand::thread_rng(),
       won: false,
-      prev_hand: None,
+      prev_hand: Hand::Rock,
     }
   }
 }
@@ -43,13 +64,13 @@ impl WinningStrategy {
 #[derive(Clone, Debug)]
 pub struct ProbeStrategy {
   rng: ThreadRng,
-  prev_hand_value: u32,
-  current_hand_value: u32,
+  prev_hand_value: u8,
+  current_hand_value: u8,
   history: [[u32; 3]; 3],
 }
 
 impl Strategy for ProbeStrategy {
-  fn next_hand(&mut self) -> Option<Hand> {
+  fn next_hand(&mut self) -> Hand {
     let bet = self.rng.gen_range(0..=self.get_sum(self.current_hand_value));
     let hand_value = if bet < self.history[self.current_hand_value as usize][0] {
       0
@@ -62,7 +83,7 @@ impl Strategy for ProbeStrategy {
     };
     self.prev_hand_value = self.current_hand_value;
     self.current_hand_value = hand_value;
-    Some(Hand::get_hand(hand_value))
+    Hand::get_hand(hand_value)
   }
 
   fn study(&mut self, win: bool) {
@@ -76,18 +97,13 @@ impl Strategy for ProbeStrategy {
 }
 
 impl ProbeStrategy {
-  fn get_sum(&self, hand_value: u32) -> u32 {
-    let mut result = 0;
-    for i in 0..2 {
-      result += self.history[hand_value as usize][i as usize]
-    }
-    result
+  fn get_sum(&self, hand_value: u8) -> u32 {
+    self.history[hand_value as usize].iter().sum()
   }
 
   pub fn new() -> Self {
-    let rng: ThreadRng = rand::thread_rng();
     Self {
-      rng,
+      rng: rand::thread_rng(),
       prev_hand_value: 0,
       current_hand_value: 0,
       history: [[1; 3]; 3],
@@ -97,7 +113,6 @@ impl ProbeStrategy {
 
 pub struct Player {
   name: String,
-  // ストラテジがPlayのみが所有するならBox、Play以外でも共有するならRc/Arcを使う
   strategy: Box<dyn Strategy>,
   win_count: u32,
   lose_count: u32,
@@ -106,11 +121,11 @@ pub struct Player {
 
 impl Display for Player {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-    let s = format!(
-      "[{}:, {} games, {} win, {} lose]",
+    write!(
+      f,
+      "[{}: {} games, {} win, {} lose]",
       self.name, self.game_count, self.win_count, self.lose_count
-    );
-    write!(f, "{}", s)
+    )
   }
 }
 
@@ -125,7 +140,7 @@ impl Player {
     }
   }
 
-  pub fn next_hand(&mut self) -> Option<Hand> {
+  pub fn next_hand(&mut self) -> Hand {
     self.strategy.next_hand()
   }
 
@@ -152,16 +167,13 @@ mod test {
 
   #[test]
   fn test() {
-    let winning_strategy = WinningStrategy::new();
-    let probe_strategy = ProbeStrategy::new();
-
-    let mut player1 = Player::new("Taro", Box::new(winning_strategy));
-    let mut player2 = Player::new("Hana", Box::new(probe_strategy));
+    let mut player1 = Player::new("Taro", Box::new(WinningStrategy::new()));
+    let mut player2 = Player::new("Hana", Box::new(ProbeStrategy::new()));
 
     for _ in 0..10000 {
-      let next_hand1 = player1.next_hand().unwrap();
-      let next_hand2 = player2.next_hand().unwrap();
-      if next_hand1.is_stronger_than(next_hand2.clone()) {
+      let next_hand1 = player1.next_hand();
+      let next_hand2 = player2.next_hand();
+      if next_hand1.is_stronger_than(next_hand2) {
         println!("Winner:{}", player1);
         player1.win();
         player2.lose();

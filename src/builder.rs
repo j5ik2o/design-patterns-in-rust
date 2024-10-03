@@ -51,13 +51,13 @@ impl TextBuilder {
 impl Builder for TextBuilder {
   fn make_title(&mut self, title: &str) {
     self.string.push_str("==============================\n");
-    self.string.push_str("『");
+    self.string.push('『');
     self.string.push_str(title);
     self.string.push_str("』\n\n");
   }
 
   fn make_string(&mut self, str: &str) {
-    self.string.push_str("■");
+    self.string.push('■');
     self.string.push_str(str);
     self.string.push_str("\n\n");
   }
@@ -65,8 +65,8 @@ impl Builder for TextBuilder {
   fn make_items(&mut self, items: &[&str]) {
     for s in items {
       self.string.push_str("　・");
-      self.string.push_str(*s);
-      self.string.push_str("\n");
+      self.string.push_str(s);
+      self.string.push('\n');
     }
   }
 
@@ -118,7 +118,7 @@ impl Builder for HtmlBuilder {
     self.string.push_str("<ul>\n");
     for s in items {
       self.string.push_str("<li>");
-      self.string.push_str(*s);
+      self.string.push_str(s);
       self.string.push_str("</li>\n");
     }
     self.string.push_str("</ul>\n\n")

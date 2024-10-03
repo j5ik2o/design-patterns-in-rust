@@ -26,7 +26,7 @@ impl Display for Day {
 
 impl<C: Context> State<C> for Day {
   fn do_clock(&self, context: &mut C, hour: u32) {
-    if hour < 9 || 17 <= hour {
+    if !(9..17).contains(&hour) {
       context.change_state(Rc::new(Night));
     }
   }
@@ -54,7 +54,7 @@ impl Display for Night {
 
 impl<C: Context> State<C> for Night {
   fn do_clock(&self, context: &mut C, hour: u32) {
-    if 9 <= hour && hour < 17 {
+    if (9..17).contains(&hour) {
       context.change_state(Rc::new(Day));
     }
   }

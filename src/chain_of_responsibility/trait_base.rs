@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::fmt::{Debug, Display, Formatter};
 use std::rc::Rc;
 
@@ -99,9 +98,7 @@ impl Display for LimitSupport {
 
 impl Support for LimitSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() < self.limit { true } else { false };
-    // print!("LimitSupport: {} ", result);
-    result
+    trouble.number() < self.limit
   }
 }
 
@@ -136,9 +133,7 @@ impl Display for OddSupport {
 
 impl Support for OddSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() % 2 == 1 { true } else { false };
-    // print!("OddSupport: {} ", result);
-    result
+    trouble.number() % 2 == 1
   }
 }
 
@@ -175,9 +170,7 @@ impl Display for SpecialSupport {
 
 impl Support for SpecialSupport {
   fn resolve(&self, trouble: &Trouble) -> bool {
-    let result = if trouble.number() == self.number { true } else { false };
-    // print!("SpecialSupport: {} ", result);
-    result
+    trouble.number() == self.number
   }
 }
 

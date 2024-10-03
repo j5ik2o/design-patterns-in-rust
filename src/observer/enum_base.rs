@@ -1,7 +1,7 @@
 use rand::prelude::ThreadRng;
 use rand::Rng;
 use std::borrow::{Borrow, BorrowMut};
-use std::cell::{Ref, RefCell};
+use std::cell::RefCell;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::{thread, time};
@@ -60,12 +60,12 @@ impl RandomNumberNumberGenerator {
   }
 
   fn add_observer(&mut self, observer: Observer) {
-    let mut g = (&*self.inner).borrow_mut();
+    let mut g = (*self.inner).borrow_mut();
     g.observers.push(observer);
   }
 
   fn delete_observer(&mut self, observer: &Observer) {
-    let mut g = (&*self.inner).borrow_mut();
+    let mut g = (*self.inner).borrow_mut();
     let index = g
       .observers
       .iter()
@@ -79,7 +79,7 @@ impl RandomNumberNumberGenerator {
   }
 
   fn notify_observers(&self) {
-    let g = (&*self.inner).borrow();
+    let g = (*self.inner).borrow();
     for o in &g.observers {
       let p = NumberGenerator::RandomNumber(self.clone());
       o.update(&p);
@@ -87,13 +87,13 @@ impl RandomNumberNumberGenerator {
   }
 
   fn get_number(&self) -> u32 {
-    let g = (&*self.inner).borrow();
+    let g = (*self.inner).borrow();
     g.number
   }
 
   fn execute(&mut self) {
     for _ in 0..20 {
-      let mut g = (&*self.inner).borrow_mut();
+      let mut g = (*self.inner).borrow_mut();
       g.number = g.rng.gen_range(0..=49);
       drop(g);
       self.notify_observers();
@@ -125,7 +125,7 @@ impl Observer {
         for _ in 0..count {
           print!("*");
         }
-        println!("");
+        println!();
         thread::sleep(time::Duration::from_millis(100));
       }
       Observer::Any(rc) => rc.update(generator),

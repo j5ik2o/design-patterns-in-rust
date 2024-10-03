@@ -1,7 +1,4 @@
-use std::borrow::Borrow;
-use std::cell::RefCell;
 use std::fmt::Debug;
-use std::rc::Rc;
 
 pub trait Visitor {
   fn visit_title(&mut self, title: &Title);
@@ -10,91 +7,88 @@ pub trait Visitor {
 }
 
 pub trait Element: Debug {
-  fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>);
+  fn accept(&self, visitor: &mut dyn Visitor);
 }
 
 #[derive(Debug)]
-pub struct Title {
-  text: String,
+pub struct Title<'a> {
+  text: &'a str,
 }
 
-impl Title {
-  pub fn new(text: &str) -> Self {
-    Self { text: text.to_owned() }
+impl<'a> Title<'a> {
+  pub fn new(text: &'a str) -> Self {
+    Self { text }
   }
 }
 
-impl Element for Title {
-  fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>) {
-    (&*visitor).borrow_mut().visit_title(self)
-  }
-}
-
-#[derive(Debug)]
-pub struct Text {
-  text: String,
-}
-
-impl Text {
-  pub fn new(text: &str) -> Self {
-    Self { text: text.to_owned() }
-  }
-}
-
-impl Element for Text {
-  fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>) {
-    (&*visitor).borrow_mut().visit_text(self)
+impl<'a> Element for Title<'a> {
+  fn accept(&self, visitor: &mut dyn Visitor) {
+    visitor.visit_title(self)
   }
 }
 
 #[derive(Debug)]
-pub struct HyperLink {
-  text: String,
-  url: String,
+pub struct Text<'a> {
+  text: &'a str,
 }
 
-impl HyperLink {
-  pub fn new(text: &str, url: &str) -> Self {
-    Self {
-      text: text.to_owned(),
-      url: url.to_owned(),
-    }
+impl<'a> Text<'a> {
+  pub fn new(text: &'a str) -> Self {
+    Self { text }
   }
 }
 
-impl Element for HyperLink {
-  fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>) {
-    (&*visitor).borrow_mut().visit_hyperlink(self)
+impl<'a> Element for Text<'a> {
+  fn accept(&self, visitor: &mut dyn Visitor) {
+    visitor.visit_text(self)
   }
 }
 
 #[derive(Debug)]
-pub struct Document {
-  parts: Vec<Rc<dyn Element>>,
+pub struct HyperLink<'a> {
+  text: &'a str,
+  url: &'a str,
 }
 
-impl Document {
-  pub fn new(parts: impl IntoIterator<Item = Rc<dyn Element>>) -> Self {
+impl<'a> HyperLink<'a> {
+  pub fn new(text: &'a str, url: &'a str) -> Self {
+    Self { text, url }
+  }
+}
+
+impl<'a> Element for HyperLink<'a> {
+  fn accept(&self, visitor: &mut dyn Visitor) {
+    visitor.visit_hyperlink(self)
+  }
+}
+
+#[derive(Debug)]
+pub struct Document<'a> {
+  parts: Vec<Box<dyn Element + 'a>>,
+}
+
+impl<'a> Document<'a> {
+  pub fn new(parts: impl IntoIterator<Item = Box<dyn Element + 'a>>) -> Self {
     Self {
       parts: parts.into_iter().collect(),
     }
   }
 
-  pub fn accept(&self, visitor: Rc<RefCell<dyn Visitor>>) {
+  pub fn accept(&self, visitor: &mut dyn Visitor) {
     for e in &self.parts {
-      e.accept(visitor.clone())
+      e.accept(visitor)
     }
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct HtmlExporterVisitor {
   builder: String,
 }
 
 impl HtmlExporterVisitor {
   pub fn new() -> Self {
-    Self { builder: "".to_owned() }
+    Self::default()
   }
 
   pub fn get_html(&self) -> &str {
@@ -118,14 +112,14 @@ impl Visitor for HtmlExporterVisitor {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PlainTextExporterVisitor {
   builder: String,
 }
 
 impl PlainTextExporterVisitor {
   pub fn new() -> Self {
-    Self { builder: "".to_owned() }
+    Self::default()
   }
 
   pub fn get_text(&self) -> &str {
@@ -152,30 +146,28 @@ impl Visitor for PlainTextExporterVisitor {
 #[cfg(test)]
 mod test {
   use super::*;
-  use std::borrow::Borrow;
 
   #[test]
   fn test() {
-    let values: Vec<Rc<dyn Element>> = vec![
-      Rc::new(Title::new("The Visitor Pattern Example")),
-      Rc::new(Text::new(
+    let values: Vec<Box<dyn Element>> = vec![
+      Box::new(Title::new("The Visitor Pattern Example")),
+      Box::new(Text::new(
         "The visitor pattern helps us add extra functionality without changing the classes.",
       )),
-      Rc::new(HyperLink::new("Go check it online!", "https://www.google.com/")),
-      Rc::new(Text::new("Thanks!")),
+      Box::new(HyperLink::new("Go check it online!", "https://www.google.com/")),
+      Box::new(Text::new("Thanks!")),
     ];
     let document = Document::new(values);
 
-    let html_exporter = Rc::new(RefCell::new(HtmlExporterVisitor::new()));
-
-    let plain_text_exporter = Rc::new(RefCell::new(PlainTextExporterVisitor::new()));
+    let mut html_exporter = HtmlExporterVisitor::new();
+    let mut plain_text_exporter = PlainTextExporterVisitor::new();
 
     println!("Export to html:");
-    document.accept(html_exporter.clone());
-    println!("{}", (&*html_exporter).borrow().get_html());
+    document.accept(&mut html_exporter);
+    println!("{}", html_exporter.get_html());
 
     println!("Export to plain:");
-    document.accept(plain_text_exporter.clone());
-    println!("{}", (&*plain_text_exporter).borrow().get_text());
+    document.accept(&mut plain_text_exporter);
+    println!("{}", plain_text_exporter.get_text());
   }
 }

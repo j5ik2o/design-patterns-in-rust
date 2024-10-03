@@ -81,7 +81,6 @@ impl Command for DoubleEchoCommand {
 #[cfg(test)]
 mod test {
   use super::*;
-  use std::fmt::Formatter;
 
   #[test]
   fn test() {

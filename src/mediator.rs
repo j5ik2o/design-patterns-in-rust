@@ -36,7 +36,7 @@ impl Mediator for ConcreteMediator {
   fn colleague_changed(&mut self, colleague: &dyn Colleague, msg: &str) {
     self.colleagues.iter().for_each(|(k, v)| {
       if k != colleague.name() {
-        (&**v).borrow_mut().on_changed(msg);
+        (**v).borrow_mut().on_changed(msg);
       }
     });
   }
@@ -66,7 +66,7 @@ impl Colleague for ConcreteColleagueA {
   }
 
   fn run(&self) {
-    let mut mr = (&*self.mediator).borrow_mut();
+    let mut mr = (*self.mediator).borrow_mut();
     mr.colleague_changed(self, "Hello");
   }
 }
@@ -95,7 +95,7 @@ impl Colleague for ConcreteColleagueB {
   }
 
   fn run(&self) {
-    let mut mr = (&*self.mediator).borrow_mut();
+    let mut mr = (*self.mediator).borrow_mut();
     mr.colleague_changed(self, "Hi");
   }
 }

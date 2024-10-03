@@ -27,12 +27,12 @@ impl State {
   pub fn do_clock<C: Context>(&self, context: &mut C, hour: u32) {
     match self {
       State::Night => {
-        if 9 <= hour && hour < 17 {
+        if (9..17).contains(&hour) {
           context.change_state(State::Day);
         }
       }
       State::Day => {
-        if hour < 9 || 17 <= hour {
+        if !(9..17).contains(&hour) {
           context.change_state(State::Night);
         }
       }

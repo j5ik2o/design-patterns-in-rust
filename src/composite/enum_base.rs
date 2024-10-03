@@ -71,7 +71,7 @@ impl Directory {
   fn print_line_with_prefix(&self, prefix: &str) {
     println!("{}/{}", prefix, self);
     for entry in &self.entries {
-      let entry_ref = (&**entry).borrow();
+      let entry_ref = (**entry).borrow();
       entry_ref.print_line_with_prefix(&format!("{}/{}", prefix, self.name))
     }
   }

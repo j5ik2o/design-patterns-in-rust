@@ -60,7 +60,6 @@ impl Command for EchoCommand {
 #[cfg(test)]
 mod test {
   use super::*;
-  use std::fmt::Formatter;
 
   #[test]
   fn test() {

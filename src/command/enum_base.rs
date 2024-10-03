@@ -71,7 +71,6 @@ impl Command {
 #[cfg(test)]
 mod test {
   use super::*;
-  use std::fmt::Formatter;
 
   #[test]
   fn test() {
