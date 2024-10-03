@@ -1,22 +1,20 @@
 use std::fmt::{Display, Formatter};
-use std::rc::Rc;
 
 pub trait Context {
   fn set_clock(&mut self, hour: u32);
-  fn change_state(&mut self, state: Rc<dyn State<Self>>);
+  fn change_state(&mut self, state: &'static dyn State);
   fn call_security_center(&self, msg: &str);
   fn record_log(&self, msg: &str);
 }
 
-pub trait State<C>: Display {
-  fn do_clock(&self, context: &mut C, hour: u32);
-  fn do_use(&self, context: &C);
-  fn do_alarm(&self, context: &C);
-  fn do_phone(&self, context: &C);
+pub trait State: Display {
+  fn do_clock(&self, context: &mut dyn Context, hour: u32);
+  fn do_use(&self, context: &dyn Context);
+  fn do_alarm(&self, context: &dyn Context);
+  fn do_phone(&self, context: &dyn Context);
 }
 
-#[derive(Debug)]
-pub struct Day;
+struct Day;
 
 impl Display for Day {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -24,27 +22,27 @@ impl Display for Day {
   }
 }
 
-impl<C: Context> State<C> for Day {
-  fn do_clock(&self, context: &mut C, hour: u32) {
+impl State for Day {
+  fn do_clock(&self, context: &mut dyn Context, hour: u32) {
     if !(9..17).contains(&hour) {
-      context.change_state(Rc::new(Night));
+      context.change_state(&NIGHT);
     }
   }
 
-  fn do_use(&self, context: &C) {
+  fn do_use(&self, context: &dyn Context) {
     context.record_log("金庫使用(昼間)");
   }
 
-  fn do_alarm(&self, context: &C) {
+  fn do_alarm(&self, context: &dyn Context) {
     context.call_security_center("非常ベル(昼間)");
   }
 
-  fn do_phone(&self, context: &C) {
+  fn do_phone(&self, context: &dyn Context) {
     context.record_log("通常の通話(昼間)");
   }
 }
 
-pub struct Night;
+struct Night;
 
 impl Display for Night {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -52,53 +50,46 @@ impl Display for Night {
   }
 }
 
-impl<C: Context> State<C> for Night {
-  fn do_clock(&self, context: &mut C, hour: u32) {
+impl State for Night {
+  fn do_clock(&self, context: &mut dyn Context, hour: u32) {
     if (9..17).contains(&hour) {
-      context.change_state(Rc::new(Day));
+      context.change_state(&DAY);
     }
   }
 
-  fn do_use(&self, context: &C) {
+  fn do_use(&self, context: &dyn Context) {
     context.call_security_center("非常：夜間の金庫使用！");
   }
 
-  fn do_alarm(&self, context: &C) {
+  fn do_alarm(&self, context: &dyn Context) {
     context.call_security_center("非常ベル(夜間)");
   }
 
-  fn do_phone(&self, context: &C) {
+  fn do_phone(&self, context: &dyn Context) {
     context.record_log("夜間の通話録音");
   }
 }
-#[derive(Clone)]
+
+static DAY: Day = Day;
+static NIGHT: Night = Night;
+
 struct StateContext {
-  state: Rc<dyn State<StateContext>>,
+  state: &'static dyn State,
 }
 
 impl StateContext {
-  fn new(state: Rc<dyn State<StateContext>>) -> Self {
+  fn new(state: &'static dyn State) -> Self {
     Self { state }
   }
 
   fn run(&mut self) {
-    let mut i = 0;
     for hour in 0..=24 {
       self.set_clock(hour);
-      match i {
-        0 => {
-          self.state.do_use(self);
-          i = 1;
-        }
-        1 => {
-          self.state.do_alarm(self);
-          i = 2;
-        }
-        2 => {
-          self.state.do_phone(self);
-          i = 0;
-        }
-        _ => panic!("iae"),
+      match hour % 3 {
+        0 => self.state.do_use(self),
+        1 => self.state.do_alarm(self),
+        2 => self.state.do_phone(self),
+        _ => unreachable!(),
       }
     }
   }
@@ -106,11 +97,10 @@ impl StateContext {
 
 impl Context for StateContext {
   fn set_clock(&mut self, hour: u32) {
-    let current_state = self.state.clone();
-    current_state.do_clock(self, hour);
+    self.state.do_clock(self, hour);
   }
 
-  fn change_state(&mut self, state: Rc<dyn State<StateContext>>) {
+  fn change_state(&mut self, state: &'static dyn State) {
     self.state = state;
   }
 
@@ -129,8 +119,7 @@ mod test {
 
   #[test]
   fn test() {
-    let state = Rc::new(Day);
-    let mut context = StateContext::new(state);
+    let mut context = StateContext::new(&DAY);
     context.run();
   }
 }

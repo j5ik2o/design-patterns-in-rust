@@ -98,7 +98,6 @@ impl Entry for Directory {
 
 #[cfg(test)]
 mod test {
-  use std::borrow::BorrowMut;
   use std::cell::RefCell;
 
   use super::*;
