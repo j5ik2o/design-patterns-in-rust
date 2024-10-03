@@ -1,6 +1,6 @@
 // #![feature(min_type_alias_impl_trait)]
 #![feature(type_alias_impl_trait)]
-#![feature(generic_associated_types)]
+// #![feature(generic_associated_types)]
 extern crate chrono;
 extern crate core;
 extern crate timer;
