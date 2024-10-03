@@ -176,7 +176,6 @@ impl Support for SpecialSupport {
 
 #[cfg(test)]
 mod test {
-  
 
   use super::*;
 

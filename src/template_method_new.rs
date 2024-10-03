@@ -1,4 +1,3 @@
-
 pub enum DisplayType {
   Char(char),
   String(String),
